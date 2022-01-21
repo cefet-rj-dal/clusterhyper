@@ -137,8 +137,8 @@ for (i in 1:val_size){
                                       grupo = numeric()
                                     )
   
-  # Criação da coluna "smape_sum_vc" que será a soma dos erros de previsão em 
-  # cada partição da validação cruzada
+  # Creation of the column "smape_sum_vc" which will be the sum of the forecast errors
+  # in each partition of the cross validation
   
   fertilizer = c("fertilizer" = fertilizers[i])
   path <- sprintf("agrupamento_espectral/data/%s.RData", fertilizer)
@@ -146,8 +146,8 @@ for (i in 1:val_size){
   s <- grep(pattern = "smape_ho", x = names(results), value = TRUE)
   results$sum_smape_vc <- rowSums(results[, s])
   
-  # Os hiperparâmetros que não foram escolhidos para otimização devem ser 
-  # fixados
+  # Hyperparameters that were not chosen for optimization must be
+  # fixed
   
   results <- filter(results, method == "mlp")
   results <- filter(results, preprocessing == "global")
@@ -156,11 +156,11 @@ for (i in 1:val_size){
   results <- filter(results, pred_size == 8)
   results <- filter(results, steps_ahead == 1)
 
-  # Para cada configuração do experimento
+  # For each experiment setup
   
   for(j in 1:nrow(opts)){
     
-    # Extrai o identificador da configuração e todos os seus componentes
+    # Extracts the configuration identifier and all its components
     
     conf = c("config" = rownames(opts)[j])
     eval_col = as.character(opts$evals[j])
@@ -169,7 +169,7 @@ for (i in 1:val_size){
     cl_sel_fun = as.character(opts$cl_sel[j])
     rec_fun = as.character(opts$cl_rec[j])
     
-    # Passa as configurações para a função de otimização de hiperparâmetros
+    # Pass settings to hyperparameter optimization function
     
     specc_fertilizer <- specc_rec(results,
                                   hyperparameter_names,
@@ -181,7 +181,7 @@ for (i in 1:val_size){
                                   rec_fun = rec_fun,
                                   centr_fun = function(g) igraph::eigen_centrality(g)$`vector`)
     
-    # Transformação da saída de "specc_rec" para facilitar a análise
+    # Transforming the output of "specc_rec" for easier parsing
     
     specc_fertilizer <- as.data.frame(specc_fertilizer)
     subtab1 <- specc_fertilizer[, c(3:11)]
@@ -191,31 +191,31 @@ for (i in 1:val_size){
     fertilizers_analysis <- rbind(fertilizers_analysis, 
                                   as.list(c(fertilizer, conf, specc_fertilizer)))
     
-    # O conjunto de recomendações obtidas para um fertilizante é armazenado em 
-    # uma lista
+    # The set of recommendations obtained for a fertilizer is stored
+    # in a list
     fertilizers_analysis_list[[fertilizers[i]]] <- fertilizers_analysis
   }
 }
 
-# Salva os resultados da otimização por agrupamento espectral em um arquivo
+# Saves spectral clustering optimization results to a file
 path <- sprintf("agrupamento_espectral/fertilizers_analysis_specc.RData")
 save(fertilizers_analysis_list, file = path)
 
 ################################################################################
 
-# Otimização por k-means
+# K-means optimization
   
-# Número de fertilizantes que se deseja otimizar
+# Number of fertilizers to be optimized
 val_size <- length(fertilizers)
 
-# Quais hiperparâmetros serão otimizados
+# Which hyperparameters will be optimized
 hyperparameter_names <- c("input_size", "size", "decay")
 
 fertilizers_analysis_list <- list()
   
 for (i in 1:val_size){
   
-  # Tabela para armazenar as recomendações de saída da otimização  
+  # Table to store optimization output recommendations
   fertilizers_analysis <- data.frame(
                                       fertilizer = character(),
                                       config = character(),
@@ -234,16 +234,16 @@ for (i in 1:val_size){
                                       grupo = numeric()
                                     )
     
-  # Criação da coluna "smape_sum_vc" que será a soma dos erros de previsão em 
-  # cada partição da validação cruzada
+  # Creation of the column "smape_sum_vc" which will be the sum of the forecast errors
+  # in each partition of the cross validation
   fertilizer = c("fertilizer" = fertilizers[i])
   path <- sprintf("agrupamento_espectral/data/%s.RData", fertilizers[i])
   load(file = path)
   s <- grep(pattern = "smape_ho", x = names(results), value = TRUE)
   results$sum_smape_vc <- rowSums(results[, s])
   
-  # Os hiperparâmetros que não foram escolhidos para otimização devem ser 
-  # fixados
+  # Hyperparameters that were not chosen for optimization must be
+  # fixed
   
   results <- filter(results, method == "mlp")
   results <- filter(results, preprocessing == "global")
@@ -252,11 +252,11 @@ for (i in 1:val_size){
   results <- filter(results, pred_size == 8)
   results <- filter(results, steps_ahead == 1)
   
-  # Para cada configuração do experimento
+  # For each experiment setup
     
   for(j in 1:nrow(opts)){
     
-    # Extrai o identificador da configuração e todos os seus componentes
+    # Extracts the configuration identifier and all its components
     
     conf = c("config" = rownames(opts)[j])
     eval_col = as.character(opts$evals[j])
@@ -264,7 +264,7 @@ for (i in 1:val_size){
     cl_sel_fun = as.character(opts$cl_sel[j])
     rec_fun = as.character(opts$cl_rec[j])
     
-    # Passa as configurações para a função de otimização de hiperparâmetros
+    # Pass settings to hyperparameter optimization function
     
     kmeans_fertilizer <- kmeans_rec(results,
                                     hyperparameter_names,
@@ -275,7 +275,7 @@ for (i in 1:val_size){
                                     rec_fun = rec_fun,
                                     centr_fun = function(g) igraph::eigen_centrality(g)$`vector`)
     
-    # Transformação da saída de "specc_rec" para facilitar a análise
+    # Transforming the output of "specc_rec" for easier parsing
     
     kmeans_fertilizer <- as.data.frame(kmeans_fertilizer)
     subtab1 <- kmeans_fertilizer[, c(3:11)]
@@ -285,13 +285,13 @@ for (i in 1:val_size){
     fertilizers_analysis <- rbind(fertilizers_analysis, 
                                   as.list(c(fertilizer, conf, kmeans_fertilizer)))
     
-    # O conjunto de recomendações obtidas para um fertilizante é armazenado em 
-    # uma lista
+    # The set of recommendations obtained for a fertilizer is stored in
+    # a list
     fertilizers_analysis_list[[fertilizers[i]]] <- fertilizers_analysis
   }
 }
 
-# Salva os resultados da otimização por k-means em um arquivo  
+# Save k-means optimization results to a file
 path <- sprintf("agrupamento_espectral/fertilizers_analysis_kmeans.RData")
 save(fertilizers_analysis_list, file = path)
 
