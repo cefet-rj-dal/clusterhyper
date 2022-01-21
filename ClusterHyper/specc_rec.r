@@ -115,7 +115,7 @@ specc_rec <- function(
   cluster <- candidate_cluster$cluster[1]
   pred_results_candidate <- pred_results[pred_results$cluster == cluster,]
   
-  #===== Within-cluster recommendation of a combination of hyperparameters =====
+  #===== Intra-cluster recommendation of a combination of hyperparameters =====
   
   # Calculates the mode of each hyperparameter in the candidate cluster, and
   # selects the combination with the values of each mode (not yet used)
